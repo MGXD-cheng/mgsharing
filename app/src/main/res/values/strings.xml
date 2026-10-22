@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">MGsharing</string>
+    <string name="notification_channel_name">文件分享服务</string>
+    <string name="notification_title">MGsharing 正在分享</string>
+    <string name="tab_share">分享</string>
+    <string name="tab_history">历史</string>
+    <string name="tab_settings">设置</string>
+</resources>
