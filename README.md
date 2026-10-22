@@ -65,4 +65,4 @@ com.lingxi.mgsharing
 
 ---
 
-灵犀科技出品 · 一人一码 🐱
+MGXD 出品 · 一人一码 🐱

@@ -17,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Key
 import androidx.compose.material.icons.filled.Lan
+import androidx.compose.material.icons.filled.OpenInNew
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
@@ -36,6 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -155,24 +157,49 @@ fun SettingsScreen(
         item { SectionLabel("关于") }
 
         item {
+            val uriHandler = LocalUriHandler.current
             Card(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        runCatching { uriHandler.openUri(GITHUB_URL) }
+                    },
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.surfaceContainer
                 )
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(
-                        text = "MGsharing",
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.Medium
-                    )
-                    Text(
-                        text = "局域网文件分享 · 灵犀科技出品\n让分享像呼吸一样简单",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(top = 4.dp)
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "MGsharing",
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.Medium
+                        )
+                        Text(
+                            text = "局域网文件分享 · MGXD出品\n让分享像呼吸一样简单",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                        Text(
+                            text = "github.com/MGXD-cheng/mgsharing",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.padding(top = 8.dp)
+                        )
+                    }
+                    Spacer(Modifier.width(12.dp))
+                    Icon(
+                        imageVector = Icons.Filled.OpenInNew,
+                        contentDescription = "打开 GitHub 仓库",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(20.dp)
                     )
                 }
             }
@@ -345,7 +372,7 @@ private fun PortDialog(
         },
         confirmButton = {
             TextButton(
-                onClick = { if (isValid) onConfirm(parsed!!) },
+                onClick = { parsed?.let { if (isValid) onConfirm(it) } },
                 enabled = isValid
             ) { Text("保存") }
         },
@@ -354,3 +381,6 @@ private fun PortDialog(
         }
     )
 }
+
+/** 项目仓库地址 —— 关于卡片点击跳转 */
+private const val GITHUB_URL = "https://github.com/MGXD-cheng/mgsharing"

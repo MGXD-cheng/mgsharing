@@ -84,6 +84,15 @@ class ServerService : Service() {
         val ip = NetworkUtils.getLocalIpAddress()
         val urlText = if (ip.isEmpty()) "http://:$port/" else "http://$ip:$port/"
 
+        // 先进入前台，满足 startForegroundService 的 5 秒约束
+        // （即使随后端口绑定失败也不会触发 RemoteServiceException）
+        val notification = buildNotification(urlText)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC)
+        } else {
+            startForeground(NOTIFICATION_ID, notification)
+        }
+
         val fileServer = FileServer(this, port)
         try {
             fileServer.start(2000)
@@ -96,13 +105,6 @@ class ServerService : Service() {
         ServerState.url.value = urlText
         ServerState.startedAt.value = System.currentTimeMillis()
         ServerState.isRunning.value = true
-
-        val notification = buildNotification(urlText)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC)
-        } else {
-            startForeground(NOTIFICATION_ID, notification)
-        }
     }
 
     private fun shutdown() {
@@ -141,6 +143,7 @@ class ServerService : Service() {
     // ---------- 通知 ----------
 
     private fun createChannel() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
         val manager = getSystemService(NotificationManager::class.java)
         val channel = NotificationChannel(
             CHANNEL_ID,
