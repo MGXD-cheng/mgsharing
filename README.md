@@ -34,6 +34,20 @@ cd mgsharing
 
 环境要求：JDK 17 + Android SDK Platform 35（ARM64 Linux 构建需替换 AAPT2）。
 
+### 发版流程（正式签名包）
+
+```bash
+./gradlew assembleRelease
+python3 tools/fix_release_apk.py   # 合并资源 + keystore 签名 + apksigner 验货
+# 产物：app/build/outputs/apk/release/app-release.apk
+```
+
+> ⚠️ ARM64/proot 环境下 `assembleRelease` 可能产出缺 `AndroidManifest.xml` /
+> `resources.arsc` 的半成品包，**必须**经 `fix_release_apk.py` 合并
+> `linked-resources-binary-format-*.ap_` 并签名，再用 `apksigner verify` +
+> 解包双重验货后才能上传 Release。
+> 签名配置读取根目录 `keystore.properties`（已 gitignore，勿提交）。
+
 ## 📖 使用方法
 
 1. 打开 MGsharing，点击「选择文件」多选要分享的文件

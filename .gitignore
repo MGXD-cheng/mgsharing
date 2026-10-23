@@ -20,3 +20,6 @@ setup_android_env.sh
 tools/
 .backup/
 .operit/
+keystore.properties
+*.jks
+*.keystore
